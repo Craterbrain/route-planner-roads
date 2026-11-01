@@ -1,0 +1,81 @@
+name: Build road data
+
+# Manual only. Each run takes one group of states from Geofabrik (one download per state, at most two at a time,
+# skipped when the source file has not changed since the last build) and publishes them to the rolling release "roads".
+on:
+  workflow_dispatch:
+    inputs:
+      group:
+        description: "States to build: group-1 (Alabama to Missouri), group-2 (Montana to Wyoming), extra (DC)"
+        required: true
+        default: group-1
+        type: choice
+        options: [group-1, group-2, extra]
+      force:
+        description: "Rebuild even if Geofabrik's file has not changed"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  list:
+    runs-on: ubuntu-latest
+    outputs:
+      states: ${{ steps.s.outputs.states }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: s
+        run: echo "states=$(jq -R . states/${{ inputs.group }}.txt | jq -sc .)" >> "$GITHUB_OUTPUT"
+      - name: Make sure the release exists
+        env: { GH_TOKEN: "${{ github.token }}" }
+        run: gh release view roads >/dev/null 2>&1 || gh release create roads --title "Road data" --notes "Valhalla road tiles per US state. See manifest.json. Built by the Build road data workflow."
+
+  build:
+    needs: list
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        state: ${{ fromJson(needs.list.outputs.states) }}
+    env: { GH_TOKEN: "${{ github.token }}" }
+    steps:
+      - uses: actions/checkout@v4
+      - name: Skip when Geofabrik's file is unchanged
+        id: check
+        run: |
+          ua="route-planner-roads (+https://github.com/${{ github.repository }})"
+          now=$(curl -fsSIL -A "$ua" "https://download.geofabrik.de/north-america/us/${{ matrix.state }}-latest.osm.pbf" | grep -i '^last-modified:' | tail -1 | cut -d' ' -f2- | tr -d '\r')
+          have=$(gh release download roads -p '${{ matrix.state }}.json' -O - 2>/dev/null | jq -r '.source_last_modified + "|" + .valhalla' || true)
+          if [ "${{ inputs.force }}" != true ] && [ "$have" = "$now|3.9.1" ]; then echo "skip=true" >> "$GITHUB_OUTPUT"; echo "unchanged since last build"; fi
+      - name: Free disk space
+        if: steps.check.outputs.skip != 'true'
+        run: sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/lib/android
+      - name: Build
+        if: steps.check.outputs.skip != 'true'
+        run: ./build-state.sh '${{ matrix.state }}' out
+      - name: Publish
+        if: steps.check.outputs.skip != 'true'
+        run: |
+          for f in out/${{ matrix.state }}.tar.gz.* ; do gh release upload roads "$f" --clobber; done
+          # drop stale parts from an earlier, longer build
+          for old in $(gh release view roads --json assets -q '.assets[].name' | grep "^${{ matrix.state }}\.tar\.gz\." || true); do [ -e "out/$old" ] || gh release delete-asset roads "$old" -y; done
+          gh release upload roads out/${{ matrix.state }}.json --clobber
+
+  manifest:
+    needs: build
+    if: always() && needs.build.result != 'cancelled'
+    runs-on: ubuntu-latest
+    env: { GH_TOKEN: "${{ github.token }}" }
+    steps:
+      - name: Merge every state's record into manifest.json
+        run: |
+          mkdir m && cd m
+          gh release download roads -R "${{ github.repository }}" -p '*.json' --skip-existing || true
+          rm -f manifest.json
+          jq -s '{updated: (now|todate), base: "https://github.com/${{ github.repository }}/releases/download/roads/", states: (map({(.state): .}) | add)}' *.json > manifest.json
+          gh release upload roads manifest.json --clobber -R "${{ github.repository }}"
+          jq -r '.states | to_entries[] | "\(.key) \(.value.built) \(([.value.parts[].bytes]|add)/1e6|floor) MB"' manifest.json
