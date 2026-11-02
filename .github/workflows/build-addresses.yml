@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       states:
-        description: "Geofabrik-style state names, comma separated (e.g. tennessee,ohio), or 'all'"
+        description: "Geofabrik-style state names, comma separated (e.g. tennessee,ohio), 'all', or 'published' (every state already in the release)"
         required: true
         default: tennessee
       force:
@@ -18,22 +18,25 @@ on:
 permissions:
   contents: write
 
-env:
-  OVERTURE_RELEASE: "2026-10-21.0" # keep equal to DEFAULT_RELEASE in addresses/build-addresses.py
-
 jobs:
   list:
     runs-on: ubuntu-latest
     outputs:
       states: ${{ steps.s.outputs.states }}
+      release: ${{ steps.s.outputs.release }}
     steps:
       - uses: actions/checkout@v4
       - id: s
+        env: { GH_TOKEN: "${{ github.token }}" }
         run: |
+          # The newest Overture release (their STAC catalog names it).
+          release=$(curl -fsSL https://stac.overturemaps.org/catalog.json | jq -r .latest)
+          echo "release=$release" >> "$GITHUB_OUTPUT"
           if [ "${{ inputs.states }}" = all ]; then list=$(cut -f1 states/codes.tsv)
+          elif [ "${{ inputs.states }}" = published ]; then list=$(gh release view addresses --json assets -q '.assets[].name' 2>/dev/null | grep -E '\.addresses\.json$' | sed 's/\.addresses\.json$//' || true)
           else list=$(echo "${{ inputs.states }}" | tr ',' '\n' | tr -d ' '); fi
-          for s in $list; do grep -qP "^$s\t" states/codes.tsv || { echo "unknown state: $s"; exit 1; }; done
-          echo "states=$(echo "$list" | jq -R . | jq -sc .)" >> "$GITHUB_OUTPUT"
+          for s in $list; do [ "${{ inputs.states }}" = published ] || grep -qP "^$s\t" states/codes.tsv || { echo "unknown state: $s"; exit 1; }; done
+          echo "states=$(echo "$list" | jq -R . | jq -sc 'map(select(length>0))')" >> "$GITHUB_OUTPUT"
       - name: Make sure the release exists
         env: { GH_TOKEN: "${{ github.token }}" }
         run: gh release view addresses >/dev/null 2>&1 || gh release create addresses --title "Address data" --notes "Offline address packs per US state (Overture Maps addresses theme, from the US National Address Database). See manifest.json."
@@ -47,7 +50,7 @@ jobs:
       max-parallel: 3
       matrix:
         state: ${{ fromJson(needs.list.outputs.states) }}
-    env: { GH_TOKEN: "${{ github.token }}" }
+    env: { GH_TOKEN: "${{ github.token }}", OVERTURE_RELEASE: "${{ needs.list.outputs.release }}" }
     steps:
       - uses: actions/checkout@v4
       - name: Skip when this Overture release is already built

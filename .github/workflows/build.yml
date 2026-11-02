@@ -6,13 +6,13 @@ on:
   workflow_dispatch:
     inputs:
       group:
-        description: "States to build: group-1 (Alabama to Missouri), group-2 (Montana to Wyoming), extra (DC)"
+        description: "States to build: group-1 (Alabama to Missouri), group-2 (Montana to Wyoming), extra (DC), published (every state already in the release)"
         required: true
         default: group-1
         type: choice
-        options: [group-1, group-2, extra]
+        options: [group-1, group-2, extra, published]
       only:
-        description: "Optional: build just this one state (Geofabrik name, e.g. rhode-island) instead of the group"
+        description: "Optional: build just these states (Geofabrik names, comma separated, e.g. ohio,rhode-island) instead of the group"
         required: false
         default: ""
       force:
@@ -31,9 +31,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - id: s
+        env: { GH_TOKEN: "${{ github.token }}" }
         run: |
-          if [ -n "${{ inputs.only }}" ]; then echo 'states=["${{ inputs.only }}"]' >> "$GITHUB_OUTPUT"
-          else echo "states=$(jq -R . states/${{ inputs.group }}.txt | jq -sc .)" >> "$GITHUB_OUTPUT"; fi
+          if [ -n "${{ inputs.only }}" ]; then list=$(echo "${{ inputs.only }}" | tr ',' '\n' | tr -d ' ')
+          elif [ "${{ inputs.group }}" = published ]; then list=$(gh release view roads --json assets -q '.assets[].name' 2>/dev/null | grep -E '^[a-z-]+\.json$' | grep -v '^manifest\.json$' | sed 's/\.json$//' || true)
+          else list=$(cat states/${{ inputs.group }}.txt); fi
+          echo "states=$(echo "$list" | jq -R . | jq -sc 'map(select(length>0))')" >> "$GITHUB_OUTPUT"
       - name: Make sure the release exists
         env: { GH_TOKEN: "${{ github.token }}" }
         run: gh release view roads >/dev/null 2>&1 || gh release create roads --title "Road data" --notes "Valhalla road tiles per US state. See manifest.json. Built by the Build road data workflow."

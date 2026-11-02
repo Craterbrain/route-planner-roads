@@ -10,7 +10,7 @@ here=$(cd "$(dirname "$0")" && pwd)
 IFS=$'\t' read -r _ code name < <(grep -P "^$state\t" "$here/states/codes.tsv" || true)
 [ -n "${code:-}" ] || { echo "unknown state $state" >&2; exit 1; }
 work="$out/work-$state"; mkdir -p "$work"
-python3 "$here/addresses/build-addresses.py" --state "$code" --region-name "$name" --out "$work/addresses.sqlite"
+python3 "$here/addresses/build-addresses.py" --state "$code" --region-name "$name" --out "$work/addresses.sqlite" ${OVERTURE_RELEASE:+--release "$OVERTURE_RELEASE"}
 release=$(python3 - "$work/addresses.sqlite" <<'PY'
 import sqlite3, sys
 print(dict(sqlite3.connect(sys.argv[1]).execute("select key,value from meta").fetchall()).get("release", ""))

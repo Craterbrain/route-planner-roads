@@ -1,0 +1,41 @@
+name: Refresh published data
+
+# Runs monthly but only rebuilds a state's roads / addresses once the published build is 180 days old
+# (so about every six months), and only for states already in the releases. Its other job: GitHub switches off
+# scheduled workflows in a repository with no activity for 60 days; a six-monthly cron would never survive that,
+# so this monthly one re-enables the workflows each time it runs.
+on:
+  schedule:
+    - cron: "17 6 1 * *"
+  workflow_dispatch:
+    inputs:
+      max_age_days:
+        description: "Rebuild states whose published build is at least this many days old"
+        default: "180"
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    env: { GH_TOKEN: "${{ github.token }}", GH_REPO: "${{ github.repository }}" }
+    steps:
+      - name: Keep workflows enabled
+        run: for w in build.yml build-addresses.yml scheduled-refresh.yml; do gh api -X PUT "repos/$GH_REPO/actions/workflows/$w/enable" || true; done
+      - name: Rebuild what is due
+        run: |
+          max=${{ inputs.max_age_days || '180' }}
+          cutoff=$(date -u -d "$max days ago" +%F)
+          due() { # release-tag json-suffix
+            for n in $(gh release view "$1" --json assets -q '.assets[].name' 2>/dev/null | grep -E "^[a-z-]+$2\$" || true); do
+              built=$(gh release download "$1" -p "$n" -O - | jq -r .built)
+              [ "$built" \< "$cutoff" ] || [ "$built" = "$cutoff" ] && echo "${n%$2}"
+            done | paste -sd, -
+          }
+          roads=$(due roads .json | tr -d ' ' | sed 's/^manifest,\?//;s/,manifest//')
+          addr=$(due addresses .addresses.json)
+          echo "roads due: ${roads:-none}"; echo "addresses due: ${addr:-none}"
+          [ -z "$roads" ] || gh workflow run build.yml -f group=published -f only="$roads" -f force=true
+          [ -z "$addr" ] || gh workflow run build-addresses.yml -f states="$addr" -f force=true
