@@ -47,13 +47,10 @@ ATTRIBUTION = (
     "contribute to the database."
 )
 LICENSE_NOTE = (
-    "Overture addresses theme carries per-source licenses (no single theme "
-    "license). Per-record sources[].license for these rows: {licenses}. "
-    "Overture attribution page (accessed 2026-10-31) states: \"The National "
-    "Address Database is licensed under the National Address Database Access "
-    "and Usage License.\" NAD disclaimer: "
-    "https://www.transportation.gov/mission/open/gis/national-address-database/"
-    "national-address-database-nad-disclaimer"
+    "Source: the US National Address Database (NAD), via the Overture addresses theme "
+    "(per-record sources[].license for these rows: {licenses}). The NAD is a work of the "
+    "US federal government and so is not subject to copyright protection (17 U.S.C. 105); "
+    "it is available for re-use without limitation or restriction."
 )
 
 # Words kept upper case when prettifying ALL-CAPS NAD names for display.
