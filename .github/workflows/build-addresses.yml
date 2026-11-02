@@ -1,0 +1,80 @@
+name: Build address data
+
+# Manual only. Builds offline address packs (Overture Maps addresses theme = US National Address Database, public domain)
+# for the chosen states and publishes them to the rolling release "addresses". Skipped per state when the Overture
+# release has not changed since the last build.
+on:
+  workflow_dispatch:
+    inputs:
+      states:
+        description: "Geofabrik-style state names, comma separated (e.g. tennessee,ohio), or 'all'"
+        required: true
+        default: tennessee
+      force:
+        description: "Rebuild even if the Overture release is unchanged"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+env:
+  OVERTURE_RELEASE: "2026-10-21.0" # keep equal to DEFAULT_RELEASE in addresses/build-addresses.py
+
+jobs:
+  list:
+    runs-on: ubuntu-latest
+    outputs:
+      states: ${{ steps.s.outputs.states }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: s
+        run: |
+          if [ "${{ inputs.states }}" = all ]; then list=$(cut -f1 states/codes.tsv)
+          else list=$(echo "${{ inputs.states }}" | tr ',' '\n' | tr -d ' '); fi
+          for s in $list; do grep -qP "^$s\t" states/codes.tsv || { echo "unknown state: $s"; exit 1; }; done
+          echo "states=$(echo "$list" | jq -R . | jq -sc .)" >> "$GITHUB_OUTPUT"
+      - name: Make sure the release exists
+        env: { GH_TOKEN: "${{ github.token }}" }
+        run: gh release view addresses >/dev/null 2>&1 || gh release create addresses --title "Address data" --notes "Offline address packs per US state (Overture Maps addresses theme, from the US National Address Database). See manifest.json."
+
+  build:
+    needs: list
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        state: ${{ fromJson(needs.list.outputs.states) }}
+    env: { GH_TOKEN: "${{ github.token }}" }
+    steps:
+      - uses: actions/checkout@v4
+      - name: Skip when this Overture release is already built
+        id: check
+        run: |
+          have=$(gh release download addresses -p '${{ matrix.state }}.addresses.json' -O - 2>/dev/null | jq -r '.release' || true)
+          if [ "${{ inputs.force }}" != true ] && [ "$have" = "$OVERTURE_RELEASE" ]; then echo "skip=true" >> "$GITHUB_OUTPUT"; echo "already built from $have"; fi
+      - uses: actions/setup-python@v5
+        if: steps.check.outputs.skip != 'true'
+        with: { python-version: "3.12" }
+      - name: Build
+        if: steps.check.outputs.skip != 'true'
+        run: pip install duckdb && ./build-addresses-state.sh '${{ matrix.state }}' out
+      - name: Publish
+        if: steps.check.outputs.skip != 'true'
+        run: gh release upload addresses out/${{ matrix.state }}.sqlite.gz out/${{ matrix.state }}.addresses.json --clobber
+
+  manifest:
+    needs: build
+    if: always() && needs.build.result != 'cancelled'
+    runs-on: ubuntu-latest
+    env: { GH_TOKEN: "${{ github.token }}" }
+    steps:
+      - name: Merge every state's record into manifest.json
+        run: |
+          mkdir m && cd m
+          gh release download addresses -R "${{ github.repository }}" -p '*.addresses.json' --skip-existing || true
+          jq -s '{updated: (now|todate), base: "https://github.com/${{ github.repository }}/releases/download/addresses/", states: (map({(.state): .}) | add)}' *.addresses.json > manifest.json
+          gh release upload addresses manifest.json --clobber -R "${{ github.repository }}"
+          jq -r '.states | to_entries[] | "\(.key) \(.value.built) \(.value.gz_bytes/1e6|floor) MB"' manifest.json

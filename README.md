@@ -6,3 +6,4 @@ Road-network data (Valhalla tiles) for each US state, used by the Route Planner 
 - Published as the `roads` release: `<state>.tar.gz.000…` (parts of ≤1900 MB, because a release file may not exceed 2 GB), `<state>.json` and `manifest.json` (sizes, SHA-256, source date).
 - Manual builds only (Actions → *Build road data*): `group-1`, `group-2`, `extra` (DC). One Geofabrik download per state, rate-limited, two at a time, skipped when Geofabrik's file hasn't changed. Rebuild a few times a year, not more often.
 - Locally: `./build-state.sh tennessee`.
+- Address data (Overture Maps / US National Address Database, public domain): Actions → *Build address data* → release `addresses` (`<state>.sqlite.gz`, `manifest.json`). Locally: `./build-addresses-state.sh tennessee` (needs `pip install duckdb`). `addresses/` is a copy of the builder from the route-planner repo (`tools/`); keep them in step.

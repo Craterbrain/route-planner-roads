@@ -1,0 +1,498 @@
+[
+ {
+  "input": "Main Street",
+  "norm": "main st"
+ },
+ {
+  "input": "Main St",
+  "norm": "main st"
+ },
+ {
+  "input": "Main St.",
+  "norm": "main st"
+ },
+ {
+  "input": "MAIN STR",
+  "norm": "main st"
+ },
+ {
+  "input": "Oak Avenue",
+  "norm": "oak ave"
+ },
+ {
+  "input": "Oak Ave",
+  "norm": "oak ave"
+ },
+ {
+  "input": "Oak Av",
+  "norm": "oak ave"
+ },
+ {
+  "input": "River Road",
+  "norm": "river rd"
+ },
+ {
+  "input": "River Rd",
+  "norm": "river rd"
+ },
+ {
+  "input": "Lakeview Drive",
+  "norm": "lakeview dr"
+ },
+ {
+  "input": "Lakeview Dr.",
+  "norm": "lakeview dr"
+ },
+ {
+  "input": "Cedar Lane",
+  "norm": "cedar ln"
+ },
+ {
+  "input": "Cedar Ln",
+  "norm": "cedar ln"
+ },
+ {
+  "input": "Memorial Boulevard",
+  "norm": "memorial blvd"
+ },
+ {
+  "input": "Memorial Blvd",
+  "norm": "memorial blvd"
+ },
+ {
+  "input": "Briley Parkway",
+  "norm": "briley pkwy"
+ },
+ {
+  "input": "Briley Pkwy",
+  "norm": "briley pkwy"
+ },
+ {
+  "input": "Sams Court",
+  "norm": "sams ct"
+ },
+ {
+  "input": "Sams Ct",
+  "norm": "sams ct"
+ },
+ {
+  "input": "Browder Circle",
+  "norm": "browder cir"
+ },
+ {
+  "input": "Browder Cir",
+  "norm": "browder cir"
+ },
+ {
+  "input": "Eichstaedt Place",
+  "norm": "eichstaedt pl"
+ },
+ {
+  "input": "Eichstaedt Pl",
+  "norm": "eichstaedt pl"
+ },
+ {
+  "input": "Blossom Trail",
+  "norm": "blossom trl"
+ },
+ {
+  "input": "Blossom Trl",
+  "norm": "blossom trl"
+ },
+ {
+  "input": "Hill Terrace",
+  "norm": "hill ter"
+ },
+ {
+  "input": "Hill Terr",
+  "norm": "hill ter"
+ },
+ {
+  "input": "Black Tea Way",
+  "norm": "black tea way"
+ },
+ {
+  "input": "Walnut Loop",
+  "norm": "walnut loop"
+ },
+ {
+  "input": "Kingston Pike",
+  "norm": "kingston pike"
+ },
+ {
+  "input": "Kingston Pk",
+  "norm": "kingston pike"
+ },
+ {
+  "input": "Shady Cove",
+  "norm": "shady cv"
+ },
+ {
+  "input": "Shady Cv",
+  "norm": "shady cv"
+ },
+ {
+  "input": "Nashville Highway",
+  "norm": "nashville hwy"
+ },
+ {
+  "input": "Nashville Hwy",
+  "norm": "nashville hwy"
+ },
+ {
+  "input": "Caruthers Trace",
+  "norm": "caruthers trce"
+ },
+ {
+  "input": "Horace Burress Rd Road",
+  "norm": "horace burress rd"
+ },
+ {
+  "input": "North Main Street",
+  "norm": "main st n"
+ },
+ {
+  "input": "N Main St",
+  "norm": "main st n"
+ },
+ {
+  "input": "Main St N",
+  "norm": "main st n"
+ },
+ {
+  "input": "Main Street North",
+  "norm": "main st n"
+ },
+ {
+  "input": "Northeast Blossom Trail",
+  "norm": "blossom trl ne"
+ },
+ {
+  "input": "Blossom Trail Northeast",
+  "norm": "blossom trl ne"
+ },
+ {
+  "input": "Blossom Trl NE",
+  "norm": "blossom trl ne"
+ },
+ {
+  "input": "E Stinson Road",
+  "norm": "stinson rd e"
+ },
+ {
+  "input": "East Stinson Rd",
+  "norm": "stinson rd e"
+ },
+ {
+  "input": "West End Avenue",
+  "norm": "end ave w"
+ },
+ {
+  "input": "North Street",
+  "norm": "n st"
+ },
+ {
+  "input": "East Ave",
+  "norm": "e ave"
+ },
+ {
+  "input": "S W Rd",
+  "norm": "s w rd"
+ },
+ {
+  "input": "1st Avenue",
+  "norm": "1st ave"
+ },
+ {
+  "input": "First Avenue",
+  "norm": "1st ave"
+ },
+ {
+  "input": "Second Ave",
+  "norm": "2nd ave"
+ },
+ {
+  "input": "2nd Ave",
+  "norm": "2nd ave"
+ },
+ {
+  "input": "12TH Avenue South",
+  "norm": "12th ave s"
+ },
+ {
+  "input": "Twelfth Avenue S",
+  "norm": "12th ave s"
+ },
+ {
+  "input": "Twenty-First Avenue",
+  "norm": "21st ave"
+ },
+ {
+  "input": "Twenty First Ave",
+  "norm": "21st ave"
+ },
+ {
+  "input": "21st Ave",
+  "norm": "21st ave"
+ },
+ {
+  "input": "St Mary Street",
+  "norm": "st mary st"
+ },
+ {
+  "input": "Saint Mary Street",
+  "norm": "st mary st"
+ },
+ {
+  "input": "St. Mary's Rd",
+  "norm": "st marys rd"
+ },
+ {
+  "input": "Mount Juliet Road",
+  "norm": "mt juliet rd"
+ },
+ {
+  "input": "Mt Juliet Rd",
+  "norm": "mt juliet rd"
+ },
+ {
+  "input": "Fort Henry Dr",
+  "norm": "ft henry dr"
+ },
+ {
+  "input": "Highway 70 East",
+  "norm": "hwy 70 e"
+ },
+ {
+  "input": "HIGHWAY 70 East",
+  "norm": "hwy 70 e"
+ },
+ {
+  "input": "Hwy 70 E",
+  "norm": "hwy 70 e"
+ },
+ {
+  "input": "US-70",
+  "norm": "hwy 70"
+ },
+ {
+  "input": "US 70",
+  "norm": "hwy 70"
+ },
+ {
+  "input": "US70",
+  "norm": "hwy 70"
+ },
+ {
+  "input": "US Hwy 70",
+  "norm": "hwy 70"
+ },
+ {
+  "input": "US Highway 70",
+  "norm": "hwy 70"
+ },
+ {
+  "input": "U.S. 70",
+  "norm": "hwy 70"
+ },
+ {
+  "input": "U. S. Highway 70",
+  "norm": "hwy 70"
+ },
+ {
+  "input": "US-70 E",
+  "norm": "hwy 70 e"
+ },
+ {
+  "input": "US Hwy 70 East",
+  "norm": "hwy 70 e"
+ },
+ {
+  "input": "State Route 70",
+  "norm": "hwy 70"
+ },
+ {
+  "input": "State Highway 70",
+  "norm": "hwy 70"
+ },
+ {
+  "input": "SR-70",
+  "norm": "hwy 70"
+ },
+ {
+  "input": "SR 70",
+  "norm": "hwy 70"
+ },
+ {
+  "input": "TN-70",
+  "norm": "hwy 70"
+ },
+ {
+  "input": "TN 70",
+  "norm": "hwy 70"
+ },
+ {
+  "input": "Route 70",
+  "norm": "hwy 70"
+ },
+ {
+  "input": "Rte 70",
+  "norm": "hwy 70"
+ },
+ {
+  "input": "RT 70",
+  "norm": "hwy 70"
+ },
+ {
+  "input": "East Highway 70",
+  "norm": "hwy 70 e"
+ },
+ {
+  "input": "HWY 19E",
+  "norm": "hwy 19 e"
+ },
+ {
+  "input": "US-19 E",
+  "norm": "hwy 19 e"
+ },
+ {
+  "input": "Highway 19 East",
+  "norm": "hwy 19 e"
+ },
+ {
+  "input": "Old Highway 70",
+  "norm": "old hwy 70"
+ },
+ {
+  "input": "OLD STATE ROUTE 34",
+  "norm": "old hwy 34"
+ },
+ {
+  "input": "New Highway 68",
+  "norm": "new hwy 68"
+ },
+ {
+  "input": "County Road 12",
+  "norm": "cr 12"
+ },
+ {
+  "input": "County Rd 12",
+  "norm": "cr 12"
+ },
+ {
+  "input": "CR 12",
+  "norm": "cr 12"
+ },
+ {
+  "input": "CR-12",
+  "norm": "cr 12"
+ },
+ {
+  "input": "Co Rd 12",
+  "norm": "cr 12"
+ },
+ {
+  "input": "County Highway 12",
+  "norm": "cr 12"
+ },
+ {
+  "input": "I-40",
+  "norm": "i 40"
+ },
+ {
+  "input": "Interstate 40",
+  "norm": "i 40"
+ },
+ {
+  "input": "Highway 070",
+  "norm": "hwy 70"
+ },
+ {
+  "input": "State Street",
+  "norm": "state st"
+ },
+ {
+  "input": "State Line Road",
+  "norm": "state line rd"
+ },
+ {
+  "input": "Old Highway Road",
+  "norm": "old hwy rd"
+ },
+ {
+  "input": "Route Ave",
+  "norm": "rte ave"
+ },
+ {
+  "input": "Morgan Co Highway",
+  "norm": "morgan co hwy"
+ },
+ {
+  "input": "  main   STREET  ",
+  "norm": "main st"
+ },
+ {
+  "input": "Main-Street",
+  "norm": "main st"
+ },
+ {
+  "input": "Café Lane",
+  "norm": "cafe ln"
+ },
+ {
+  "input": "Peña Blvd",
+  "norm": "pena blvd"
+ },
+ {
+  "input": "Main St, Apt 4",
+  "norm": "main st apt 4"
+ },
+ {
+  "input": "O'Neil Road",
+  "norm": "oneil rd"
+ },
+ {
+  "input": "O’Neil Rd",
+  "norm": "oneil rd"
+ },
+ {
+  "input": "ONeil Rd",
+  "norm": "oneil rd"
+ },
+ {
+  "input": "Smith-Jones Rd",
+  "norm": "smith jones rd"
+ },
+ {
+  "input": "A & B Rd",
+  "norm": "a and b rd"
+ },
+ {
+  "input": "A and B Road",
+  "norm": "a and b rd"
+ },
+ {
+  "input": "M.L. King Jr. Blvd",
+  "norm": "ml king jr blvd"
+ },
+ {
+  "input": "McNeil Boulevard",
+  "norm": "mcneil blvd"
+ },
+ {
+  "input": "John McNeil Blvd",
+  "norm": "john mcneil blvd"
+ },
+ {
+  "input": "MacArthur Dr",
+  "norm": "macarthur dr"
+ },
+ {
+  "input": "",
+  "norm": ""
+ },
+ {
+  "input": "   ",
+  "norm": ""
+ }
+]
